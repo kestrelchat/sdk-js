@@ -1,13 +1,35 @@
 {
   "name": "@kestrelchat/sdk",
   "version": "0.1.0",
+  "description": "SDK For Kestrel Chat API",
+  "author": "Kestrel Chat <dev@kestrel.chat>",
+  "license": "AGPL-3.0-or-later",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kestrelchat/sdk.git"
+  },
+  "homepage": "https://github.com/kestrelchat/sdk#readme",
+  "bugs": {
+    "url": "https://github.com/kestrelchat/sdk/issues"
+  },
   "packageManager": "yarn@4.12.0",
+  "engines": {
+    "node": ">=18"
+  },
   "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
     "dist"
   ],
+  "sideEffects": false,
+  "private": false,
   "scripts": {
     "build": "tsc",
     "dev": "tsx watch src/index.ts",
