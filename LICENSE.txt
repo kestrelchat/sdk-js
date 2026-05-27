@@ -1,0 +1,8 @@
+<p align="center">
+    <img src="https://github.com/kestrelchat/kestrelchat/blob/main/branding/png/Kestrel__Repo-Header.png?raw=true" alt="Kestrel Banner">
+</p>
+
+# About
+
+NOTE: Kestrel isn't out yet so this sdk is useless.
+TODO: Write later
