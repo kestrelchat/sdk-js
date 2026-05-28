@@ -1,4 +1,4 @@
-import { $SessionResponse } from "./types/schemas";
+import { $SessionResponse } from './types/schemas';
 
 export interface KestrelClientOptions {
   base_url?: string;
