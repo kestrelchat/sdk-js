@@ -29,7 +29,6 @@
     "dist"
   ],
   "sideEffects": false,
-  "private": false,
   "scripts": {
     "build": "tsc",
     "dev": "tsx watch src/index.ts",
