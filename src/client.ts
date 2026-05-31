@@ -1,11 +1,8 @@
-import { $SessionResponse } from './types/schemas.ts';
-
 export interface KestrelClientOptions {
   base_url?: string;
 }
 
 export class KestrelClient {
-  private sessions: $SessionResponse = [];
   private base_url: string;
 
   constructor(options: KestrelClientOptions = {}) {
