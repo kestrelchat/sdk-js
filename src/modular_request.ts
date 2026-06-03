@@ -11,8 +11,8 @@ export class ModularRequest {
   SetHeader(key: string, value: string) {
     this.init.headers = {
       ...this.init.headers,
-      ...Object.fromEntries([[key, value]])
-    }
+      ...Object.fromEntries([[key, value]]),
+    };
     return this;
   }
 

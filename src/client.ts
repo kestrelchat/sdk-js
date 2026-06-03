@@ -1,4 +1,4 @@
-import { API } from "./api_wrapper.ts";
+import { API } from './api_wrapper.ts';
 
 export interface KestrelClientOptions {
   base_url: string;
