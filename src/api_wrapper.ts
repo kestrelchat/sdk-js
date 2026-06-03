@@ -13,6 +13,8 @@ import type {
   $RegisterRequest,
   $RegisterResponse,
   $SessionResponse,
+  $GetSelfResponse,
+  $CreateRelationshipRequest,
 } from './types/schemas';
 
 export interface $APIError {
@@ -111,6 +113,11 @@ export class API {
     // PromptLogin -> this.session_id = session_id;
   }
 
+  async CheckLogin() {
+    if (!this.auth_token) console.log('You are not logged in. Please log in!');
+    return;
+  }
+
   async GetMeta() {
     return await FetchHandler<$APIResponse<$Meta>>(
       new ModularRequest(`${this.base_url}/`),
@@ -123,10 +130,6 @@ export class API {
       new ModularRequest(`${this.base_url}/users/count`),
       APIResponseToJSON,
     );
-  }
-
-  async PromptLogin() {
-    console.log('You are not logged in. Please log in!');
   }
 
   async Register(register_request: $RegisterRequest) {
@@ -145,7 +148,8 @@ export class API {
       ).POST.ApplicationJson.Body(login_request),
       APIResponseToJSON,
     );
-    if (response?.success && response.result.status === 'Success') this.auth_token = response.result.auth_token;
+    if (response?.success && response.result.status === 'Success')
+      this.auth_token = response.result.auth_token;
     return response;
   }
 
@@ -156,12 +160,14 @@ export class API {
       ).POST.ApplicationJson.Body(login_mfa_step_request),
       APIResponseToJSON,
     );
-    if (response?.success && response.result.status === 'Success') this.auth_token = response.result.auth_token;
+    if (response?.success && response.result.status === 'Success')
+      this.auth_token = response.result.auth_token;
     return response;
   }
 
-  async Logout() { // Logs out current session
-    if (!this.auth_token) await this.PromptLogin();
+  async Logout() {
+    // Logs out current session
+    await this.CheckLogin();
     return await FetchHandler(
       new ModularRequest(
         `${this.base_url}/auth/logout`,
@@ -170,10 +176,8 @@ export class API {
     );
   }
 
-  async ChangePassword(
-    change_password_request: $ChangePasswordRequest,
-  ) {
-    if (!this.auth_token) await this.PromptLogin();
+  async ChangePassword(change_password_request: $ChangePasswordRequest) {
+    await this.CheckLogin();
     return await FetchHandler(
       new ModularRequest(
         `${this.base_url}/auth/password/change`,
@@ -185,7 +189,7 @@ export class API {
   }
 
   async EnableTotp() {
-    if (!this.auth_token) await this.PromptLogin();
+    await this.CheckLogin();
     return await FetchHandler<$APIResponse<$EnableTotpResponse>>(
       new ModularRequest(
         `${this.base_url}/auth/mfa/totp`,
@@ -197,7 +201,7 @@ export class API {
   async ConfirmEnableTotp(
     confirm_enable_totp_request: $ConfirmEnableTotpRequest,
   ) {
-    if (!this.auth_token) await this.PromptLogin();
+    await this.CheckLogin();
     return await FetchHandler(
       new ModularRequest(
         `${this.base_url}/auth/mfa/totp/confirm`,
@@ -208,10 +212,8 @@ export class API {
     );
   }
 
-  async DisableTotp(
-    disable_totp_request: $DisableTotpRequest,
-  ) {
-    if (!this.auth_token) await this.PromptLogin();
+  async DisableTotp(disable_totp_request: $DisableTotpRequest) {
+    await this.CheckLogin();
     return await FetchHandler(
       new ModularRequest(
         `${this.base_url}/auth/mfa/totp`,
@@ -223,7 +225,7 @@ export class API {
   }
 
   async GetSessions() {
-    if (!this.auth_token) await this.PromptLogin();
+    await this.CheckLogin();
     return await FetchHandler<$APIResponse<$SessionResponse>>(
       new ModularRequest(
         `${this.base_url}/auth/sessions`,
@@ -232,8 +234,9 @@ export class API {
     );
   }
 
-  async DisableSession(session: string) { // Log out specific session
-    if (!this.auth_token) await this.PromptLogin();
+  async RevokeSession(session: string) {
+    // Log out specific session
+    await this.CheckLogin();
     return await FetchHandler(
       new ModularRequest(
         `${this.base_url}/auth/sessions/${session}`,
@@ -242,8 +245,8 @@ export class API {
     );
   }
 
-  async DisableOtherSessions() {
-    if (!this.auth_token) await this.PromptLogin();
+  async RevokeOtherSessions() {
+    await this.CheckLogin();
     return await FetchHandler(
       new ModularRequest(
         `${this.base_url}/auth/sessions`,
@@ -252,8 +255,47 @@ export class API {
     );
   }
 
-  async DisableAllSessions() {
-    if (!this.auth_token) await this.PromptLogin();
-    return await this.DisableOtherSessions().then(this.Logout);
+  async RevokeAllSessions() {
+    await this.CheckLogin();
+    return await this.RevokeOtherSessions().then(this.Logout);
+  }
+
+  async GetSelf() {
+    await this.CheckLogin();
+    return await FetchHandler<$APIResponse<$GetSelfResponse>>(
+      new ModularRequest(
+        `${this.base_url}/users/@me`,
+      ).GET.ApplicationJson.BearerAuth(this.auth_token),
+      APIResponseToJSON,
+    );
+  }
+
+  async FriendUser(target_id: string) {
+    await this.CheckLogin();
+    return await this.SetRelationship(target_id, {
+      action: 'friend',
+    });
+  }
+
+  async BlockUser(target_id: string) {
+    await this.CheckLogin();
+    return await this.SetRelationship(target_id, {
+      action: 'block',
+    });
+  }
+
+  async SetRelationship(
+    target_id: string,
+    create_relationship_request: $CreateRelationshipRequest,
+  ) {
+    await this.CheckLogin();
+    return await FetchHandler<$APIResponse<$GetSelfResponse>>(
+      new ModularRequest(
+        `${this.base_url}/users/@me/relationships/${target_id}`,
+      ).POST.ApplicationJson.BearerAuth(this.auth_token).Body(
+        create_relationship_request,
+      ),
+      APIResponseToJSON,
+    );
   }
 }
