@@ -36,9 +36,7 @@ export interface $RegisterResponse {
   email: string;
 }
 
-export type $LoginResponseStatus =
-  | 'Success'
-  | 'RequiresMfa';
+export type $LoginResponseStatus = 'Success' | 'RequiresMfa';
 
 export interface $LoginRequest {
   email: string;
@@ -61,8 +59,7 @@ export interface $LoginResponseSuccess extends $LoginResponseShared {
   refresh_token: string;
 }
 
-export type $MfaMethod =
-  | 'Totp'
+export type $MfaMethod = 'Totp';
 
 export interface $LoginResponseMfa extends $LoginResponseShared {
   status: 'RequiresMfa';
@@ -104,4 +101,15 @@ export interface $ConfirmEnableTotpRequest {
 
 export interface $DisableTotpRequest {
   password: string;
+}
+
+export interface $GetSelfResponse {
+  id: string;
+  session: $SessionView;
+}
+
+export type $RelationshipAction = 'friend' | 'block';
+
+export interface $CreateRelationshipRequest {
+  action: $RelationshipAction;
 }

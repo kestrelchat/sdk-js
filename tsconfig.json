@@ -10,11 +10,7 @@
     "skipLibCheck": true,
     "esModuleInterop": true,
     "rewriteRelativeImportExtensions": true,
-    "types": [
-      "node"
-    ]
+    "types": ["node"]
   },
-  "include": [
-    "src"
-  ]
+  "include": ["src"]
 }
